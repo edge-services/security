@@ -1,0 +1,55 @@
+{
+  "label": "$SERVICE_NAME Deployment Policy",
+  "description": "AI Classification and Detection service Horizon Deployment Policy",
+  "service": {
+    "name": "$SERVICE_NAME",
+    "org": "$HZN_ORG_ID",
+    "arch": "*",
+    "serviceVersions": [
+      {
+        "version": "$SERVICE_VERSION",
+        "priority":{}
+      }
+    ]
+  },
+  "properties": [
+  ],
+  "constraints": [
+    "model == \"Rpi4\"",
+    "hasCamera == true",
+    "detection == true"
+  ],
+  "userInput": [
+    {
+      "serviceOrgid": "$HZN_ORG_ID",
+      "serviceUrl": "$SERVICE_NAME",
+      "serviceVersionRange": "[0.0.0,INFINITY)",
+      "inputs": [
+        {
+          "name": "LABELS",
+          "value": "Default,Fire"
+        },
+        {
+          "name": "DATA_DIR",
+          "value": "/usr/share"
+        },
+        {
+          "name": "USE_WEBCAM",
+          "value": "true"
+        },
+        {
+          "name": "EMAIL_USER",
+          "value": "d10954cd3668ef"
+        },
+        {
+          "name": "EMAIL_PASSWORD",
+          "value": "a659eed8435e84"
+        },
+        {
+          "name": "LD_LIBRARY_PATH",
+          "value": "/opt/vc/lib"
+        }
+      ]
+    }
+  ]
+}

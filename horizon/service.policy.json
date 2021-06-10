@@ -1,0 +1,10 @@
+{
+    "properties": [
+    ],
+    "constraints": [
+      "model == \"Rpi4\"",
+      "hasCamera == true",
+      "detection == true"
+    ]
+}
+  

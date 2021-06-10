@@ -1,0 +1,41 @@
+{
+        "deviceType": "SecurityCamera1",
+        "rules": [
+            {
+                "conditions": {
+                    "any": [
+                        {
+                            "all": [
+                                {
+                                    "fact": "class",
+                                    "operator": "equal",
+                                    "value": "Fire"                                
+                                },
+                                {
+                                    "fact": "confidence",
+                                    "operator": "greaterThanInclusive",
+                                    "value": 50
+                                }
+                            ]
+                        }                    
+                    ]
+                },
+                "event": {
+                    "type": "FireDetected",
+                    "params": {
+                        "message": "Fire Event is Detected"
+                    }
+                }
+            }                
+        ],
+        "actions": [
+            {
+                "event": "FireDetected",
+                "type": "interval",
+                "publish":{
+                    "frequency": 3,
+                    "time": 20
+                }
+            }
+        ] 
+}

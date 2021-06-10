@@ -1,0 +1,60 @@
+{
+    "devices": [
+        {
+            "type":"HB_SENSOR_V1",
+            "uniqueId":"HB_3C71BF4340FC",
+            "publish": [
+                {
+                    "frequency": "*/5 * * * * *",
+                    "sensors": [
+                        {"name": "hum", "config" : {"min": 40, "max": 70}},
+                        {"name": "temp", "config": {"min": 15, "max": 40}}                        
+                    ]  
+                },
+                {
+                    "frequency": "*/10 * * * * *",
+                    "sensors": [
+                        {"name": "press", "config": {"min": 974, "max": 976}},
+                        {"name": "alt", "config": {"min": 304, "max": 306}}
+                    ]  
+                }              
+            ]            
+        }
+    ],
+    "transformations": [
+        {
+            "deviceType": "HB_SENSOR_V1",
+            "transformFunc": "function transform(data) {\n console.log('In Transform function: >> ', data);\n return data;\n }"
+        }
+    ],
+    "rules": [
+        {
+            "conditions": {
+                "any": [
+                    {
+                        "all": [
+                            {
+                                "fact": "output",
+                                "operator": "equal",
+                                "value": "Fire",
+                                "path": "$.class"
+                            },
+                            {
+                                "fact": "output",
+                                "operator": "greaterThanInclusive",
+                                "value": 55,
+                                "path": "$.confidence"
+                            }
+                        ]
+                    }                    
+                ]
+            },
+            "event": {
+                "type": "FireDetected",
+                "params": {
+                    "message": "Fire Event is Detected"
+                }
+            }
+        }                
+    ]
+}

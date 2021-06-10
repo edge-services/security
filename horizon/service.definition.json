@@ -1,0 +1,64 @@
+{
+    "org": "$HZN_ORG_ID",
+    "label": "$SERVICE_NAME for $ARCH",
+    "description": "Fire Detection Service",
+    "public": true,
+    "documentation": "",
+    "url": "$SERVICE_NAME",
+    "version": "$SERVICE_VERSION",
+    "arch": "$ARCH",
+    "sharable": "singleton",
+    "requiredServices": [],
+    "userInput": [
+        {
+            "name": "LABELS",
+            "label": "Classes to detect",
+            "type": "string",
+            "defaultValue": "Default,Fire"
+        },
+        {
+            "name": "DATA_DIR",
+            "label": "Data Directory",
+            "type": "string",
+            "defaultValue": "/usr/share"
+        },
+        {
+            "name": "USE_WEBCAM",
+            "label": "Use of Webcam or Picam",
+            "type": "string",
+            "defaultValue": "true"
+        },
+        {
+            "name": "EMAIL_USER",
+            "label": "Mailtrap Email User",
+            "type": "string",
+            "defaultValue": "d10954cd3668ef"
+        },
+        {
+            "name": "EMAIL_PASSWORD",
+            "label": "Mailtrap Email User",
+            "type": "string",
+            "defaultValue": "a659eed8435e84"
+        },
+        {
+            "name": "LD_LIBRARY_PATH",
+            "label": "env variable to set",
+            "type": "string",
+            "defaultValue": "/opt/vc/lib"
+        }
+    ],
+    "deployment": {
+        "services": {
+            "security": {
+                "image": "${DOCKER_IMAGE_BASE}_$ARCH:$SERVICE_VERSION",
+                "ports": [ 
+                    { "HostIP": "0.0.0.0" , "HostPort": "3000:3000/tcp"}
+                ],
+                "network": "host",
+                "binds": ["/opt/vc/lib:/opt/vc/lib:rw", "/opt/vc/bin:/opt/vc/bin:rw", "/usr/share:/usr/share:rw", "/tmp:/tmp:rw"],
+                "devices": ["/dev/mem:/dev/mem", "/dev/vchiq:/dev/vchiq"],
+                "privileged": true
+            }
+        }
+    }
+}
