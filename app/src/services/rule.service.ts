@@ -75,7 +75,8 @@ export class RuleService implements RuleServiceI {
             if(this.eventsQueue.length == action.publish.frequency){
                 console.log(this.eventsQueue.length, ' ', event.type , ' events triggered in last ', seconds, ' seconds with ', data.confidence , ' confidence');
                 console.log("PUBLISH EVENT for data: ", data, ", Event: ", event, "\n\n"); 
-                this.eventsQueue = new Array();                               
+                this.eventsQueue = new Array(); 
+                await this.publishIFTTTWebhook(event, {'value1': data.confidence});                              
             }else{
                 console.log(this.eventsQueue.length, ' ', event.type , ' events triggered in last ', seconds, ' seconds with ', data.confidence , ' confidence');
             }
@@ -98,6 +99,22 @@ export class RuleService implements RuleServiceI {
         let transFunc: Function = new Function ('return ' +transformFuncStr)();
 
         return transFunc(data);
+    }
+
+    private async publishIFTTTWebhook(event: Event, payload){
+        const iftt_URL = `https://maker.ifttt.com/trigger/${event.type}/with/key/btF72fQ8puB6rda4-ANVvn`;
+        const response = await fetch(iftt_URL, {
+            method: 'POST',
+            body: payload,
+            headers: {'Content-Type': 'application/json'} });
+          
+          if (!response.ok) { 
+              console.log('NO RESPONSE FROM IFTTT WebHook POST');
+          }
+        
+          if (response.body !== null) {
+            console.log(response.body);
+          }
     }
 
 }
