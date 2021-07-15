@@ -1,7 +1,8 @@
 import { ServiceBindings } from '../keys';
 import { RuleServiceI, CommonServiceI } from './types';
 import {bind, inject, BindingScope} from '@loopback/core';
-import { Engine, Rule, Event } from 'json-rules-engine'
+import { Engine, Rule, Event } from 'json-rules-engine';
+import fetch from 'cross-fetch';
 
 @bind({scope: BindingScope.APPLICATION})
 export class RuleService implements RuleServiceI {
@@ -105,7 +106,7 @@ export class RuleService implements RuleServiceI {
         const iftt_URL = `https://maker.ifttt.com/trigger/${event.type}/with/key/btF72fQ8puB6rda4-ANVvn`;
         const response = await fetch(iftt_URL, {
             method: 'POST',
-            body: payload,
+            body: JSON.stringify(payload),
             headers: {'Content-Type': 'application/json'} });
           
           if (!response.ok) { 
@@ -113,7 +114,7 @@ export class RuleService implements RuleServiceI {
           }
         
           if (response.body !== null) {
-            console.log(response.body);
+            // console.log(response.body);
           }
     }
 
