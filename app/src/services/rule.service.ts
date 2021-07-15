@@ -101,7 +101,7 @@ export class RuleService implements RuleServiceI {
         return transFunc(data);
     }
 
-    private async publishIFTTTWebhook(event: Event, payload){
+    private async publishIFTTTWebhook(event: Event, payload: any){
         const iftt_URL = `https://maker.ifttt.com/trigger/${event.type}/with/key/btF72fQ8puB6rda4-ANVvn`;
         const response = await fetch(iftt_URL, {
             method: 'POST',
