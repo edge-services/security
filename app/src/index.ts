@@ -1,8 +1,41 @@
 import {ApplicationConfig, SecurityApplication} from './application';
+import * as dotenv from "dotenv";
 
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
+
+
+  dotenv.config();
+  let env_path = process.env.NODE_ENV;
+  if(env_path){
+    dotenv.config({ path: env_path });
+  } 
+
+  const PORT = process.env.PORT || 3000;
+  console.log('PORT: >> ', process.env.PORT);
+  if(!options || !options['rest']){
+    options = {
+      rest: {
+        port: PORT,
+        openApiSpec: { setServersFromRequest: true }       
+      },
+    }
+  }
+
+  options.rest.port = PORT;  
+  options.rest.openApiSpec = { setServersFromRequest: true };
+  options.rest.requestBodyParser = {json: {limit: '2mb'}};
+  options.rest.cors = {
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      maxAge: 86400,
+      credentials: true     
+  }
+
+
   const app = new SecurityApplication(options);
   await app.boot();
   await app.start();
@@ -15,24 +48,7 @@ export async function main(options: ApplicationConfig = {}) {
 }
 
 if (require.main === module) {
-  // Run the application
-  const config = {
-    rest: {
-      port: +(process.env.PORT ?? 3000),
-      host: process.env.HOST,
-      // The `gracePeriodForClose` provides a graceful close for http/https
-      // servers with keep-alive clients. The default value is `Infinity`
-      // (don't force-close). If you want to immediately destroy all sockets
-      // upon stop, set its value to `0`.
-      // See https://www.npmjs.com/package/stoppable
-      gracePeriodForClose: 5000, // 5 seconds
-      openApiSpec: {
-        // useful when used with OpenAPI-to-GraphQL to locate your application
-        setServersFromRequest: true,
-      },
-    },
-  };
-  main(config).catch(err => {
+  main().catch(err => {
     console.error('Cannot start the application.', err);
     process.exit(1);
   });

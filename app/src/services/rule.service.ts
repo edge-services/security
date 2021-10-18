@@ -16,6 +16,31 @@ export class RuleService implements RuleServiceI {
         this.engine = new Engine();
      }
 
+    async formatNAddRules(rules: Array<any>): Promise<void>{
+        let formatedRules: any = [];
+        for(let rule of rules){
+            let formatedRule: any = {'conditions': {}};
+            if(rule.condition.type == 'all' || rule.condition.type == 'any'){
+                formatedRule['conditions'][rule.condition.type] = [];
+                for(let child of rule.children){
+                    if(child.type == 'fact'){
+                        formatedRule['conditions'][rule.condition.type].push({
+                            "fact": child.fact.key,
+                            "operator": child.fact.operator,
+                            "value": child.fact.value,
+                            "path": child.fact.path
+                        })                       
+                    }
+
+                    formatedRules.push(formatedRule);
+                }
+            }
+        }
+        
+        await this.addRules(formatedRules);
+
+    }
+
     async addRules(rules: Array<Rule>) {
         if(rules){
             for(let rule of rules){
@@ -77,7 +102,8 @@ export class RuleService implements RuleServiceI {
                 console.log(this.eventsQueue.length, ' ', event.type , ' events triggered in last ', seconds, ' seconds with ', data.confidence , ' confidence');
                 console.log("PUBLISH EVENT for data: ", data, ", Event: ", event, "\n\n"); 
                 this.eventsQueue = new Array(); 
-                await this.publishIFTTTWebhook(event, {'value1': data.confidence});                              
+                // await this.publishIFTTTWebhook(event, {'value1': data.confidence}); 
+                await this.publishToFlow(event, data);                              
             }else{
                 console.log(this.eventsQueue.length, ' ', event.type , ' events triggered in last ', seconds, ' seconds with ', data.confidence , ' confidence');
             }
@@ -89,7 +115,7 @@ export class RuleService implements RuleServiceI {
     }
 
     private async transformNvalidate(data: any): Promise<any>{
-
+        // For eg. data = {'input': {'image': image}, 'output': {'class': 'Fire', 'confidence': 65}}; 
         let func = function transform(data: any){
             // console.log('In Transform function: >> ');
             return data;
@@ -100,6 +126,38 @@ export class RuleService implements RuleServiceI {
         let transFunc: Function = new Function ('return ' +transformFuncStr)();
 
         return transFunc(data);
+    }
+
+    private async publishToFlow(event: Event, data: any){
+        console.log('IN publishToFlow: >> Event: ', event, ', Data: ', data);
+        if(process.env.FLOW_URL){
+
+            let payload = {
+                "topic": "detection",
+                "event": event.type,
+                "data": data,
+                "metadata": {
+                    "deviceId": await this.commonService.getSerialNumber(),
+                    "deviceCategory":"RPiCamera",
+                    "tenantId": "ibm",
+                    "accountId": "3beGT2qPs8SzMNWTaeMN61"
+                }
+            }
+
+            const response = await fetch(process.env.FLOW_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {'Content-Type': 'application/json'} });
+              
+              if (!response.ok) { 
+                  console.log('NO RESPONSE FROM FLOW SERVICE POST');
+              }
+            
+              if (response.body !== null) {
+                // console.log(response.body);
+              }
+        }       
+        
     }
 
     private async publishIFTTTWebhook(event: Event, payload: any){

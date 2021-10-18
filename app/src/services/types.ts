@@ -21,6 +21,7 @@ export interface SecurityServiceI {
 }
 
 export interface RuleServiceI {
+    formatNAddRules(rules: Array<any>): Promise<void>;
     addRules(rules: Array<any>): Promise<void>;
     processRules(data: any): Promise<void>;
 }
