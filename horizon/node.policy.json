@@ -3,6 +3,7 @@
     { "name": "model", "value": "Rpi4" },
     { "name": "hasCamera", "value": true },
     { "name": "detection", "value": true },
+    { "name": "runFlows", "value": true },
     { "name": "openhorizon.allowPrivileged", "value": true }    
   ],
   "constraints": [

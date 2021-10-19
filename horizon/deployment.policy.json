@@ -15,7 +15,6 @@
   "properties": [
   ],
   "constraints": [
-    "model == \"Rpi4\"",
     "hasCamera == true",
     "detection == true"
   ],
@@ -38,16 +37,12 @@
           "value": "true"
         },
         {
-          "name": "EMAIL_USER",
-          "value": "d10954cd3668ef"
-        },
-        {
-          "name": "EMAIL_PASSWORD",
-          "value": "a659eed8435e84"
-        },
-        {
           "name": "LD_LIBRARY_PATH",
           "value": "/opt/vc/lib"
+        },
+        {
+          "name": "FLOW_URL",
+          "value": "http://localhost:1880/event"
         }
       ]
     }

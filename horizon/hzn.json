@@ -1,5 +1,5 @@
 {
-    "HZN_ORG_ID": "myorg",
+    "HZN_ORG_ID": "iac-example-ieam-cluster",
     "MetadataVars": {
         "DOCKER_IMAGE_BASE": "sinny777/security",
         "SERVICE_NAME": "security",

@@ -29,23 +29,17 @@
             "defaultValue": "true"
         },
         {
-            "name": "EMAIL_USER",
-            "label": "Mailtrap Email User",
-            "type": "string",
-            "defaultValue": "d10954cd3668ef"
-        },
-        {
-            "name": "EMAIL_PASSWORD",
-            "label": "Mailtrap Email User",
-            "type": "string",
-            "defaultValue": "a659eed8435e84"
-        },
-        {
             "name": "LD_LIBRARY_PATH",
-            "label": "env variable to set",
+            "label": "LD_LIBRARY_PATH",
             "type": "string",
             "defaultValue": "/opt/vc/lib"
-        }
+        },
+        {
+            "name": "FLOW_URL",
+            "label": "FLOW_URL",
+            "type": "string",
+            "defaultValue": "http://localhost:1880/event"
+        }        
     ],
     "deployment": {
         "services": {
