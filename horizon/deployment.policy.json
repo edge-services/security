@@ -42,7 +42,7 @@
         },
         {
           "name": "FLOW_URL",
-          "value": "http://localhost:1880/event"
+          "value": "http://localhost:1880/publish"
         }
       ]
     }

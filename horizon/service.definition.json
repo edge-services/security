@@ -38,7 +38,7 @@
             "name": "FLOW_URL",
             "label": "FLOW_URL",
             "type": "string",
-            "defaultValue": "http://localhost:1880/event"
+            "defaultValue": "http://localhost:1880/publish"
         }        
     ],
     "deployment": {
