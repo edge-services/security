@@ -134,14 +134,14 @@ export class RuleService implements RuleServiceI {
 
             let payload = {
                 "topic": "detection",
-                "event": event.type,
-                "data": data,
                 "metadata": {
                     "deviceId": await this.commonService.getSerialNumber(),
                     "deviceCategory":"RPiCamera",
                     "tenantId": "ibm",
                     "accountId": "3beGT2qPs8SzMNWTaeMN61"
-                }
+                },
+                "event": event,
+                "d": data                
             }
 
             const response = await fetch(process.env.FLOW_URL, {

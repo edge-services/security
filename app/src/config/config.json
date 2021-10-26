@@ -21,16 +21,16 @@
                     ]
                 },
                 "event": {
-                    "type": "FireDetected",
+                    "type": "SecurityAlert",
                     "params": {
-                        "message": "Fire Event is Detected"
+                        "message": "Fire is Detected near door"
                     }
                 }
             }                
         ],
         "actions": [
             {
-                "event": "FireDetected",
+                "event": "SecurityAlert",
                 "type": "interval",
                 "publish":{
                     "frequency": 3,
