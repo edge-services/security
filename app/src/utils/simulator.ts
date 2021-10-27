@@ -1,7 +1,7 @@
 import { ServiceBindings } from '../keys';
 import {bind, inject, BindingScope} from '@loopback/core';
 import { SimulatorUtilityI } from '.';
-import { CommonServiceI, RuleServiceI } from '../services';
+import { CommonServiceI } from '../services';
 import * as SCHEDULE from 'node-schedule';
 import * as simulateJson from '../config/simulate.json';
 
@@ -9,15 +9,12 @@ import * as simulateJson from '../config/simulate.json';
 export class SimulatorUtility implements SimulatorUtilityI {
 
     constructor(
-        @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI,
-        @inject(ServiceBindings.RULE_SERVICE) private ruleService: RuleServiceI        
+        @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI    
     ) { }
 
     async simulate(config: any): Promise<void> {    
         try{
-                await this.createScheduler(simulateJson);
-                let rules: Array<any> = simulateJson.rules;
-                this.ruleService.addRules(rules);
+                // await this.createScheduler(simulateJson);              
             } catch(err){
                 console.log("Error in simulate: >>>>>>> ");
                 console.log(err);
@@ -36,8 +33,7 @@ export class SimulatorUtility implements SimulatorUtilityI {
                     for(const sensor of p.sensors){
                         sensorData["d"][sensor.name] = this.getRandomInclusive(sensor.config);                             
                     }; 
-                    console.log(sensorData);
-                    this.ruleService.processRules(sensorData);                         
+                    console.log(sensorData);                                            
                 });                              
             }            
         }        

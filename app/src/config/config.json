@@ -23,19 +23,14 @@
                 "event": {
                     "type": "SecurityAlert",
                     "params": {
-                        "message": "Fire is Detected near door"
+                        "message": "Fire is Detected near door",
+                        "publish": {
+                            "when": "x-in-y",
+                            "count": 3,
+                            "timePeriod": 20
+                        }                        
                     }
-                }
+                }                
             }                
-        ],
-        "actions": [
-            {
-                "event": "SecurityAlert",
-                "type": "interval",
-                "publish":{
-                    "frequency": 3,
-                    "time": 20
-                }
-            }
         ]
 }

@@ -1,5 +1,5 @@
 import { ServiceBindings } from '../keys';
-import { DetectionServiceI, CommonServiceI, CameraServiceI, RuleServiceI } from './types';
+import { DetectionServiceI, CommonServiceI, CameraServiceI, DataFlowServiceI } from './types';
 import {bind, inject, BindingScope, service} from '@loopback/core';
 import path from 'path';
 import * as SCHEDULE from 'node-schedule';
@@ -14,15 +14,11 @@ export class DetectionService implements DetectionServiceI {
     labels: string[];
     predictionCount = 0;
     detecting: boolean = false; 
-    alertConfig: any = {
-            label: 'Fire',
-            frequency: 3
-        };   
     
     constructor(
         @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI,
         @inject(ServiceBindings.CAMERA_SERVICE) private cameraService: CameraServiceI,
-        @inject(ServiceBindings.RULE_SERVICE) private ruleService: RuleServiceI        
+        @inject(ServiceBindings.DATAFLOW_SERVICE) private dataflowService: DataFlowServiceI,      
     ) {
         
      }
@@ -30,7 +26,6 @@ export class DetectionService implements DetectionServiceI {
     async startDetection(): Promise<void> {    
         try{
                 console.log('\n\n<<<<< Starting Events Detection >>>>>> \n\n');
-
                 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../assets');  
                 const framesDir = path.join(DATA_DIR, 'frames');
                 if (!fs.existsSync(framesDir)){
@@ -41,9 +36,7 @@ export class DetectionService implements DetectionServiceI {
                     await this.loadModel();
                     let s = SCHEDULE.scheduleJob('*/5 * * * * *', async () => {
                         const result = await this.predictFrame();
-                        await this.ruleService.processRules(result);
-                        // console.log('RESULT: >> ', result.output);
-                        // await testPrediction(objectDetectionModel);
+                        await this.dataflowService.execute(result);                      
                         this.detecting = true;                      
                     }); 
                 }else{

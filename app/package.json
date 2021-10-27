@@ -61,11 +61,12 @@
     "cross-fetch": "^3.1.4",
     "dotenv": "^10.0.0",
     "json-rules-engine": "^6.1.2",
-    "loopback-connector-mongodb": "^6.1.0",
     "node-schedule": "^2.0.0",
     "node-webcam": "^0.8.0",
     "path": "^0.12.7",
     "pi-camera-connect": "^0.3.4",
+    "node-ts-cache": "^4.2.3",
+    "node-ts-cache-storage-memory": "^4.2.3",
     "request": "^2.88.2",
     "systeminformation": "^5.6.12",
     "tslib": "^2.0.0"

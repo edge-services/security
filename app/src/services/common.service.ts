@@ -4,39 +4,17 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { CommonServiceI } from '.';
 import { SystemInfo } from './../models/system-info.model';
-import * as configJson from '../config/config.json';
-import { Config } from '../models/config.model';
-import path from 'path';
-
-const request = require('request');
+import { Cache, CacheContainer } from 'node-ts-cache'
+import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 @bind({scope: BindingScope.SINGLETON})
 export class CommonService implements CommonServiceI {
 
-  constructor() {}
+  appCache = new CacheContainer(new MemoryStorage())
 
-  private APP_CONFIG: Config;
-
-  async getAppConfig(): Promise<Config> {  
-    if(!this.APP_CONFIG) {
-      this.APP_CONFIG = configJson;
-    }
-    return this.APP_CONFIG;
-  }
-
-  async getRules(): Promise<any> {  
-    if(!this.APP_CONFIG) {
-      this.APP_CONFIG = await this.getAppConfig();
-    }
-     return this.APP_CONFIG.rules;
-  }
-  
-  async getActions(): Promise<any> {  
-    if(!this.APP_CONFIG) {
-      this.APP_CONFIG = await this.getAppConfig();
-    }
-     return this.APP_CONFIG.actions;
-  }
+  constructor(
+    
+  ) {}
 
   async getSystemInformation(valueObject: any): Promise<SystemInfo> {   
     if(!valueObject) {
@@ -45,6 +23,8 @@ export class CommonService implements CommonServiceI {
         "mem": "total, free, used"             
       };
     }
+    const systemDetails = await si.system();
+    // console.log("systemDetails: >> ", systemDetails);
     let systemInfo: SystemInfo = await si.get(valueObject);
     systemInfo.internet = await si.inetChecksite('google.com');
     systemInfo.other = {};
@@ -61,6 +41,10 @@ export class CommonService implements CommonServiceI {
     return systemInfo;
   }
 
+  async getSystemDetails(): Promise<any> {   
+    return await si.system();
+  }
+
   async getSerialNumber(): Promise<string> {
 		try{
 			  let content = fs.readFileSync('/proc/cpuinfo', 'utf8');
@@ -72,7 +56,7 @@ export class CommonService implements CommonServiceI {
 		}catch(err){
 			console.log("process.platform: >>> ", process.platform);
 			if(process.platform == 'darwin'){
-				return "000000008c0be72b";
+				return "10000000f3da8141";
 			}else{
 				return '';
 			}
@@ -80,7 +64,15 @@ export class CommonService implements CommonServiceI {
   }
 
   async loadConfiguration(): Promise<any>{
-    return 
+    return false;
+  }
+
+  async setItemInCache(key: string, value: any){
+    this.appCache.setItem(key, value, {isCachedForever: true});
+  }
+
+  async getItemFromCache(key: string){
+    return this.appCache.getItem(key);
   }
 
 }

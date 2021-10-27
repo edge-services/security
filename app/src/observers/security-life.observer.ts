@@ -18,8 +18,7 @@ export class SecurityLifeObserver implements LifeCycleObserver {
   constructor(
     // inject `app` if you need access to other artifacts by `await this.app.get()`
     @inject(CoreBindings.APPLICATION_INSTANCE) private app: Application,
-    @inject(ServiceBindings.SECURITY_SERVICE) private securityService: SecurityServiceI,
-    @inject(UtilityBindings.SIMULATOR_UTILITY) private simulatoreUtility: SimulatorUtilityI,
+    @inject(ServiceBindings.SECURITY_SERVICE) private securityService: SecurityServiceI
   ) {}
 
   async boot(): Promise<void> {
@@ -34,9 +33,6 @@ export class SecurityLifeObserver implements LifeCycleObserver {
     let cleanup = new Cleanup();
     cleanup.init(this.cleanupOnExit);
     await this.securityService.initSecurity();
-    // if(process.env.SIMULATE && process.env.SIMULATE.toLowerCase() === 'true'){
-    //   await this.simulatoreUtility.simulate({});
-    // }    
   }
 
   /**
