@@ -12,6 +12,7 @@ export interface CommonServiceI {
 export interface RadioServiceI {
     initRadio(): void;
     isAvailable(): boolean;
+    send(payload: any): Promise<any>;
 }
 
 export interface SecurityServiceI {

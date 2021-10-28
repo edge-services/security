@@ -1,5 +1,5 @@
 import { ServiceBindings } from '../keys';
-import { CommonServiceI, DataFlowServiceI } from './types';
+import { CommonServiceI, DataFlowServiceI, RadioServiceI } from './types';
 import {bind, inject, BindingScope} from '@loopback/core';
 // const moment = require('moment');
 import fetch from 'cross-fetch';
@@ -8,7 +8,8 @@ import fetch from 'cross-fetch';
 export class DataFlowService implements DataFlowServiceI {
 
     constructor(
-        @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI
+        @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI,
+        @inject(ServiceBindings.RADIO_SERVICE) private radioService: RadioServiceI,
     ) {
         
     }
@@ -22,7 +23,7 @@ export class DataFlowService implements DataFlowServiceI {
         try{
             if(payload && payload['output']){
                 console.log('IN DataflowService.execute, payload: >> ', payload['output']);
-                await this.publishToGateway(payload);
+                await this.publish(payload);
              }
             //  return Promise.resolve(payload);
         }catch(error){
@@ -32,10 +33,10 @@ export class DataFlowService implements DataFlowServiceI {
         
     }
 
-    private async publishToGateway(result: any){
+    private async publish(result: any): Promise<any>{
+        let payload: any;
         let publish = false;
         const detecting_label = process.env.DETECT;
-
         if(detecting_label){
             if(detecting_label == result.output.class){
                 publish  = true;
@@ -44,13 +45,28 @@ export class DataFlowService implements DataFlowServiceI {
             publish  = true;
         }
 
-        if(publish && process.env.GATEWAY_API){
-            // console.log('IN publishToFlow: >> , Result: ', result.output);
-            let payload = {
+        if(publish){
+            payload = {
                 "uniqueId": await this.commonService.getItemFromCache("deviceId"),
                 "type": "RpiCamera",
                 "d": result.output                
             }
+        }
+
+        if(process.env.GATEWAY_API){
+            return this.publishToGateway(payload);
+        }
+
+        if(this.radioService.isAvailable()){
+            return this.radioService.send(payload);
+        }
+
+        return Promise.resolve("SUCCESS");
+    
+    }
+
+    private async publishToGateway(payload: any){
+        if(payload){
             console.log(payload);
             const response = await fetch(process.env.GATEWAY_API+'/gateway/data-flow', {
                 method: 'POST',
@@ -59,10 +75,11 @@ export class DataFlowService implements DataFlowServiceI {
               
               if (!response.ok) { 
                   console.log('NO RESPONSE FROM GATEWAY SERVICE POST');
+                  return Promise.resolve("SUCCESS");
               }
             
               if (response.body !== null) {
-                // console.log(response.body);
+                return Promise.reject(response.body);
               }
         }       
         

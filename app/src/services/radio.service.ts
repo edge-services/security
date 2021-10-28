@@ -1,6 +1,5 @@
 import {bind, inject, BindingScope} from '@loopback/core';
-import { ServiceBindings } from '../keys';
-import { DataFlowServiceI, RadioServiceI } from './types';
+import { RadioServiceI } from './types';
 
 let RADIO: any;
 
@@ -12,7 +11,7 @@ export class RadioService implements RadioServiceI {
     private radioAvailable: boolean = false;
 
     constructor(
-      @inject(ServiceBindings.DATAFLOW_SERVICE) private dataflowService: DataFlowServiceI
+      // @inject(ServiceBindings.DATAFLOW_SERVICE) private dataflowService: DataFlowServiceI
     ) {
         if(process.platform != 'darwin'){
             RADIO = require('edge-sx127x');
@@ -21,8 +20,13 @@ export class RadioService implements RadioServiceI {
 
   async initRadio(): Promise<void>{    
     try{
+
+      if(!process.env.USE_RADIO){
+          return Promise.resolve();
+      }
+
         if(this.radio || !RADIO){
-            return;
+          return Promise.resolve();
         }
         this.radio = new RADIO({
               frequency: this.FREQUENCY
@@ -55,6 +59,8 @@ export class RadioService implements RadioServiceI {
               });
             });
 
+            return Promise.resolve();
+
         }catch(err){
             this.radioAvailable = false;
             console.log("Error in initRadion: >>>>>>> ");
@@ -64,6 +70,19 @@ export class RadioService implements RadioServiceI {
 
   isAvailable() {
     return this.radioAvailable;
+  }
+
+  async send(payload: any): Promise<any> {
+    if(this.radio && this.radioAvailable && payload){
+      const buffer = Buffer.from(JSON.stringify(payload)).toString('base64');
+      this.radio.write(buffer, function(err: any){
+          if(err){
+            console.error(err);
+          }else{
+            console.log('SUCCESS');
+          }
+      });
+    }
   }
 
 

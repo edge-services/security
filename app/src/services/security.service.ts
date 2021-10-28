@@ -23,10 +23,7 @@ export class SecurityService implements SecurityServiceI {
 
     const deviceId = await this.commonService.getSerialNumber();
     await this.commonService.setItemInCache('deviceId', deviceId);
-
-    if(process.env.USE_RADIO){
-      await this.radioService.initRadio();
-    }    
+    await this.radioService.initRadio();
     // await this.ruleService.addRules(await this.commonService.getRules());
     await this.detectionService.startDetection();
   }

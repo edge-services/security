@@ -29,6 +29,10 @@
           "value": "Default,Fire"
         },
         {
+          "name": "DETECT",
+          "value": "Fire"
+        },
+        {
           "name": "DATA_DIR",
           "value": "/usr/share"
         },
@@ -37,13 +41,17 @@
           "value": "true"
         },
         {
+          "name": "USE_RADIO",
+          "value": "false"
+        },
+        {
           "name": "LD_LIBRARY_PATH",
           "value": "/opt/vc/lib"
         },
         {
-          "name": "FLOW_URL",
-          "value": "http://localhost:1880/publish"
-        }
+          "name": "GATEWAY_API",
+          "value": "http://localhost:9000/api"
+        } 
       ]
     }
   ]
