@@ -42,8 +42,12 @@
         },
         {
           "name": "USE_RADIO",
-          "value": "true"
+          "value": "false"
         },
+        {
+          "name": "GATEWAY_API",
+          "value": "http://192.168.1.9:9000/api"
+      },
         {
           "name": "LD_LIBRARY_PATH",
           "value": "/opt/vc/lib"

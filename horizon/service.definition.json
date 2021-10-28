@@ -38,7 +38,13 @@
             "name": "USE_RADIO",
             "label": "Use of Radio module",
             "type": "string",
-            "defaultValue": "true"
+            "defaultValue": "false"
+        },
+        {
+            "name": "GATEWAY_API",
+            "label": "GATEWAY_API",
+            "type": "string",
+            "defaultValue": "http://192.168.1.9:9000/api"
         },
         {
             "name": "LD_LIBRARY_PATH",
