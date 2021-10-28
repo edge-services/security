@@ -34,6 +34,7 @@ export class DataFlowService implements DataFlowServiceI {
     }
 
     private async publish(result: any): Promise<any>{
+        console.log('In PUBLISH: >> ', result.output);
         let payload: any;
         let publish = false;
         const detecting_label = process.env.DETECT;
@@ -51,16 +52,16 @@ export class DataFlowService implements DataFlowServiceI {
                 "type": "RpiCamera",
                 "d": result.output                
             }
+            if(process.env.GATEWAY_API){
+                return await this.publishToGateway(payload);
+            }
+    
+            console.log('Radio is available: >> ', payload);
+            if(this.radioService.isAvailable()){
+                return await this.radioService.send(payload);
+            }  
         }
-
-        if(process.env.GATEWAY_API){
-            return this.publishToGateway(payload);
-        }
-
-        if(this.radioService.isAvailable()){
-            return this.radioService.send(payload);
-        }
-
+        
         return Promise.resolve("SUCCESS");
     
     }

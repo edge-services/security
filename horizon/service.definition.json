@@ -38,20 +38,14 @@
             "name": "USE_RADIO",
             "label": "Use of Radio module",
             "type": "string",
-            "defaultValue": "false"
+            "defaultValue": "true"
         },
         {
             "name": "LD_LIBRARY_PATH",
             "label": "LD_LIBRARY_PATH",
             "type": "string",
             "defaultValue": "/opt/vc/lib"
-        },
-        {
-            "name": "GATEWAY_API",
-            "label": "GATEWAY_API",
-            "type": "string",
-            "defaultValue": "http://localhost:9000/api"
-        }      
+        }     
     ],
     "deployment": {
         "services": {

@@ -42,16 +42,12 @@
         },
         {
           "name": "USE_RADIO",
-          "value": "false"
+          "value": "true"
         },
         {
           "name": "LD_LIBRARY_PATH",
           "value": "/opt/vc/lib"
-        },
-        {
-          "name": "GATEWAY_API",
-          "value": "http://localhost:9000/api"
-        } 
+        }
       ]
     }
   ]
