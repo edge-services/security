@@ -3,7 +3,7 @@ import { RadioServiceI } from './types';
 
 let RADIO: any;
 
-@bind({scope: BindingScope.TRANSIENT})
+@bind({scope: BindingScope.SINGLETON})
 export class RadioService implements RadioServiceI {
 
     radio: any;
@@ -18,9 +18,8 @@ export class RadioService implements RadioServiceI {
         }
     }
 
-  async initRadio(): Promise<void>{    
+  async initRadio(): Promise<void>{  
     try{
-
       if(!process.env.USE_RADIO){
           return Promise.resolve();
       }
@@ -74,7 +73,9 @@ export class RadioService implements RadioServiceI {
 
   async send(payload: any): Promise<any> {
     if(this.radio && this.radioAvailable && payload){
-      const buffer = Buffer.from(JSON.stringify(payload)).toString('base64');
+      // const buffer = Buffer.from(JSON.stringify(payload)).toString('base64');
+      const buffer = Buffer.from(JSON.stringify(payload));
+      console.log('Publish to radio: >> ', buffer);
       this.radio.write(buffer, function(err: any){
           if(err){
             console.error(err);

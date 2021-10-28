@@ -34,12 +34,17 @@ sinny777/security:0.0.1 /bin/bash
 
 docker run -it --name security \
 -p 3000:3000 --env-file .env \
--v /opt/vc/bin:/opt/vc/bin \
--v /opt/vc/lib:/opt/vc/lib \
+-v /opt/vc/bin:/opt/vc/bin:rw \
+-v /opt/vc/lib:/opt/vc/lib:rw \
+-v /usr/share:/usr/share:rw \
+-v /tmp:/tmp:rw \
 --device /dev/vchiq \
 --mount type=bind,source=/usr/share,target=/usr/share \
 --privileged \
 sinny777/security_arm64:0.0.1
+
+"binds": ["/opt/vc/lib:/opt/vc/lib:rw", "/opt/vc/bin:/opt/vc/bin:rw", "/usr/share:/usr/share:rw", "/tmp:/tmp:rw"],
+                "devices": ["/dev/mem:/dev/mem", "/dev/vchiq:/dev/vchiq"],
 
 export DOCKER_HUB_ID="<dockerhubid>"
 echo "P@ssw0rd" | docker login -u $DOCKER_HUB_ID --password-stdin

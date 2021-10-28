@@ -34,7 +34,7 @@ export class DataFlowService implements DataFlowServiceI {
     }
 
     private async publish(result: any): Promise<any>{
-        console.log('In PUBLISH: >> ', result.output);
+        // console.log('In PUBLISH: >> ', result.output);
         let payload: any;
         let publish = false;
         const detecting_label = process.env.DETECT;
@@ -56,7 +56,7 @@ export class DataFlowService implements DataFlowServiceI {
                 return await this.publishToGateway(payload);
             }
     
-            console.log('Radio is available: >> ', payload);
+            // console.log('Radio is available: >> ', this.radioService.isAvailable());
             if(this.radioService.isAvailable()){
                 return await this.radioService.send(payload);
             }  
@@ -80,7 +80,7 @@ export class DataFlowService implements DataFlowServiceI {
               }
             
               if (response.body !== null) {
-                return Promise.reject(response.body);
+                return Promise.resolve();
               }
         }       
         
