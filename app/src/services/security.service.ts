@@ -23,6 +23,18 @@ export class SecurityService implements SecurityServiceI {
 
     const deviceId = await this.commonService.getSerialNumber();
     await this.commonService.setItemInCache('deviceId', deviceId);
+
+    const appConfig = {
+      "DATA_DIR": process.env.DATA_DIR,
+      "LABELS": process.env.LABELS,
+      "DETECT": process.env.DETECT,
+      "USE_WEBCAM": process.env.USE_WEBCAM,
+      "USE_RADIO": process.env.USE_RADIO,
+      "GATEWAY_API": process.env.GATEWAY_API
+    }
+
+    await this.commonService.setItemInCache("APP_CONFIG", appConfig);
+
     await this.radioService.initRadio();
     // await this.ruleService.addRules(await this.commonService.getRules());
     await this.detectionService.startDetection();

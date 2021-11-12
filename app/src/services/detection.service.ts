@@ -11,10 +11,10 @@ const fs = require('fs');
 export class DetectionService implements DetectionServiceI {
 
     model: any;
-    labels: string[];
+    labels: string[]; 
     predictionCount = 0;
     detecting: boolean = false; 
-    
+
     constructor(
         @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI,
         @inject(ServiceBindings.CAMERA_SERVICE) private cameraService: CameraServiceI,
@@ -26,7 +26,8 @@ export class DetectionService implements DetectionServiceI {
     async startDetection(): Promise<void> {    
         try{
                 console.log('\n\n<<<<< Starting Events Detection >>>>>> \n\n');
-                const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../assets');  
+                const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+                const DATA_DIR = appConfig.DATA_DIR || path.join(__dirname, '../assets');  
                 const framesDir = path.join(DATA_DIR, 'frames');
                 if (!fs.existsSync(framesDir)){
                     fs.mkdirSync(framesDir);
@@ -61,8 +62,9 @@ export class DetectionService implements DetectionServiceI {
 
     private async loadModel(): Promise<void> {
         try {
-          const LABELS = process.env.LABELS || ''; 
-          const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../assets');  
+          const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+          const LABELS = appConfig.LABELS || ''; 
+          const DATA_DIR = appConfig.DATA_DIR || path.join(__dirname, '../assets');  
           console.log('DATA_DIR: >> ', DATA_DIR);
           this.labels = LABELS.split(',');
           const MODEL_PATH = path.join(DATA_DIR, 'model');

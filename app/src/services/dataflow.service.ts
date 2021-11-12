@@ -37,7 +37,8 @@ export class DataFlowService implements DataFlowServiceI {
         // console.log('In PUBLISH: >> ', result.output);
         let payload: any;
         let publish = false;
-        const detecting_label = process.env.DETECT;
+        const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+        const detecting_label = appConfig.DETECT;
         if(detecting_label){
             if(detecting_label == result.output.class){
                 publish  = true;
@@ -52,8 +53,10 @@ export class DataFlowService implements DataFlowServiceI {
                 "type": "RpiCamera",
                 "d": result.output                
             }
-            if(process.env.GATEWAY_API){
-                return await this.publishToGateway(payload);
+            const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+            const GATEWAY_API_URL = appConfig.GATEWAY_API;
+            if(GATEWAY_API_URL){
+                return await this.publishToGateway(GATEWAY_API_URL, payload);
             }
     
             // console.log('Radio is available: >> ', this.radioService.isAvailable());
@@ -66,10 +69,10 @@ export class DataFlowService implements DataFlowServiceI {
     
     }
 
-    private async publishToGateway(payload: any){
+    private async publishToGateway(GATEWAY_API_URL: string, payload: any){
         if(payload){
             console.log(payload);
-            const response = await fetch(process.env.GATEWAY_API+'/gateway/data-flow', {
+            const response = await fetch(GATEWAY_API_URL+'/gateway/data-flow', {
                 method: 'POST',
                 body: JSON.stringify(payload),
                 headers: {'Content-Type': 'application/json'} });

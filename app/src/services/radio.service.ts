@@ -1,5 +1,6 @@
 import {bind, inject, BindingScope} from '@loopback/core';
-import { RadioServiceI } from './types';
+import { ServiceBindings } from '../keys';
+import { CommonServiceI, RadioServiceI } from './types';
 
 let RADIO: any;
 
@@ -11,7 +12,7 @@ export class RadioService implements RadioServiceI {
     private radioAvailable: boolean = false;
 
     constructor(
-      // @inject(ServiceBindings.DATAFLOW_SERVICE) private dataflowService: DataFlowServiceI
+      @inject(ServiceBindings.COMMON_SERVICE) private commonService: CommonServiceI
     ) {
         if(process.platform != 'darwin'){
             RADIO = require('edge-sx127x');
@@ -20,7 +21,8 @@ export class RadioService implements RadioServiceI {
 
   async initRadio(): Promise<void>{  
     try{
-      if(!process.env.USE_RADIO){
+      const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+      if(appConfig && appConfig.USE_RADIO === 'false'){
           return Promise.resolve();
       }
 
