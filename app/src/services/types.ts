@@ -1,12 +1,16 @@
 import { SystemInfo } from "../models";
-import { Config } from "../models/config.model";
+// import { Config } from "../models/config.model";
+const EventEmitter = require('events');
+class ResponseEmitter extends EventEmitter {};
 
 export interface CommonServiceI {
+    init(): Promise<void> ;
     getSystemDetails(): Promise<any> ;
     getSystemInformation(valueObject: any): Promise<SystemInfo> ;
     getSerialNumber(): Promise<string> ;
     setItemInCache(key: string, content: any): Promise<void>;
     getItemFromCache(key: string): Promise<any>;
+    getRespEmitter(): Promise<ResponseEmitter>;
 }
 
 export interface RadioServiceI {
@@ -22,6 +26,7 @@ export interface SecurityServiceI {
 }
 
 export interface DetectionServiceI {
+    init(): Promise<void>;
     startDetection(): Promise<void>;
     stopDetection(): Promise<void>;
 }

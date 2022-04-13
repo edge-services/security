@@ -10,12 +10,12 @@ export class WebcamService implements CameraServiceI {
     camera: any;
 
     webcam_opts = {
-        width: 264,
-        height: 264,
+        width: 224,
+        height: 224,
         quality: 100,
         frames: 60,
         delay: 0,
-        saveShots: true,
+        saveShots: false,
         output: "jpeg",
         device: false,
         callbackReturn: "buffer",

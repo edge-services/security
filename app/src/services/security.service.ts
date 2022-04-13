@@ -15,6 +15,7 @@ export class SecurityService implements SecurityServiceI {
   
   async initSecurity(): Promise<void>{
     console.log(' IN SecurityService.initSecurity: >>>>>> ');
+    await this.commonService.init();
     const systemInfo = await this.getSystemInformation({});
     console.log('systemInfo: >> ', systemInfo);
     if(systemInfo && systemInfo.other && systemInfo.other.internetAvailable){
@@ -26,6 +27,7 @@ export class SecurityService implements SecurityServiceI {
 
     const appConfig = {
       "DATA_DIR": process.env.DATA_DIR,
+      "MODEL_TAR_FILE": process.env.MODEL_TAR_FILE,
       "LABELS": process.env.LABELS,
       "DETECT": process.env.DETECT,
       "USE_WEBCAM": process.env.USE_WEBCAM,
@@ -37,7 +39,14 @@ export class SecurityService implements SecurityServiceI {
 
     await this.radioService.initRadio();
     // await this.ruleService.addRules(await this.commonService.getRules());
-    await this.detectionService.startDetection();
+    (await this.commonService.getRespEmitter()).on('MODEL_AVAILABLE', async (error: any, response: any) => {
+      console.log("EVENT MODEL_AVAILABLE: >> ", response);
+      if(response == 'SUCCESS'){
+        await this.detectionService.startDetection();
+      }
+    });
+    await this.detectionService.init();
+    // await this.detectionService.startDetection();
   }
   
   async syncWithCloud(): Promise<void> {

@@ -44,7 +44,7 @@ export class DataFlowService implements DataFlowServiceI {
                 publish  = true;
             }
         }else{
-            publish  = true;
+            publish  = false;
         }
 
         if(publish){

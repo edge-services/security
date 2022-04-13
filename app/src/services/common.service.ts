@@ -6,15 +6,25 @@ import { CommonServiceI } from '.';
 import { SystemInfo } from './../models/system-info.model';
 import { Cache, CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
+require('events').EventEmitter.defaultMaxListeners = Infinity;
+const EventEmitter = require('events');
+class ResponseEmitter extends EventEmitter {};
 
 @bind({scope: BindingScope.SINGLETON})
 export class CommonService implements CommonServiceI {
 
-  appCache = new CacheContainer(new MemoryStorage())
+  appCache = new CacheContainer(new MemoryStorage());
+  respEmitter: ResponseEmitter;
 
   constructor(
     
   ) {}
+
+  async init(){
+    this.respEmitter = new ResponseEmitter();
+    this.respEmitter.removeAllListeners();
+    this.respEmitter.setMaxListeners(100);
+  }
 
   async getSystemInformation(valueObject: any): Promise<SystemInfo> {   
     if(!valueObject) {
@@ -73,6 +83,10 @@ export class CommonService implements CommonServiceI {
 
   async getItemFromCache(key: string){
     return this.appCache.getItem(key);
+  }
+
+  async getRespEmitter(): Promise<ResponseEmitter>{
+    return this.respEmitter;
   }
 
 }

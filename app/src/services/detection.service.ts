@@ -3,6 +3,8 @@ import { DetectionServiceI, CommonServiceI, CameraServiceI, DataFlowServiceI } f
 import {bind, inject, BindingScope, service} from '@loopback/core';
 import path from 'path';
 import * as SCHEDULE from 'node-schedule';
+import fetch from 'cross-fetch';
+import { FileUtil } from '../utils';
 
 const tf = require('@tensorflow/tfjs-node');
 const fs = require('fs');
@@ -23,6 +25,31 @@ export class DetectionService implements DetectionServiceI {
         
      }
 
+    async init(){
+      const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
+      const DATA_DIR = appConfig.DATA_DIR || path.join(__dirname, '../assets');  
+      const modelDir = path.join(DATA_DIR, 'model');
+      const tarFilePath = path.join(DATA_DIR, 'model.tgz');
+      // const tarFilePath = appConfig.MODEL_TAR_FILE
+
+      const fileUtil = new FileUtil(this.commonService);
+
+      if (!fs.existsSync(modelDir)){
+        console.log('Download and Extract AI Model');
+        const URL = appConfig['MODEL_TAR_FILE'];
+        const result = await fileUtil.download(URL, tarFilePath, DATA_DIR).catch((err: any) => {
+          console.error('error while downloading', err)
+        }).finally(async () =>{
+            // console.log('DOWNLOAD COMPLETED.....');
+            // (await this.commonService.getRespEmitter()).emit("MODEL_AVAILABLE", null, "SUCCESS"); 
+        });        
+      }else{
+        console.log("<<<<<<<<< MODEL IS ALREADY AVAILABLE >>>>>>>>");
+        (await this.commonService.getRespEmitter()).emit("MODEL_AVAILABLE", null, "SUCCESS");  
+      }
+    }
+
+    
     async startDetection(): Promise<void> {    
         try{
                 console.log('\n\n<<<<< Starting Events Detection >>>>>> \n\n');
@@ -65,11 +92,13 @@ export class DetectionService implements DetectionServiceI {
           const appConfig = await this.commonService.getItemFromCache('APP_CONFIG');
           const LABELS = appConfig.LABELS || ''; 
           const DATA_DIR = appConfig.DATA_DIR || path.join(__dirname, '../assets');  
-          console.log('DATA_DIR: >> ', DATA_DIR);
           this.labels = LABELS.split(',');
           const MODEL_PATH = path.join(DATA_DIR, 'model');
+          // const MODEL_PATH = path.join(DATA_DIR, 'tflite/model.tflite');
+          console.log('MODEL_PATH: >> ', MODEL_PATH);
           if (!this.model) {
              this.model = await tf.node.loadSavedModel(MODEL_PATH, ['serve'], 'serving_default');
+            // this.model = await tf.node.loadSavedModel(MODEL_PATH);
             //  objectDetectionModelInfo = await tf.node.getMetaGraphsFromSavedModel(path);
             console.log('AI Model Loaded...');
           }
@@ -85,9 +114,11 @@ export class DetectionService implements DetectionServiceI {
         }else{
           imageBuffer = fs.readFileSync(image);
         }
-        const tfimage = tf.node.decodeImage(imageBuffer);
-        const processedImg =  tf.tidy(() => tfimage.expandDims(0).toFloat().div(224).sub(1));
-        // imageBuffer.dispose();
+        const tfimage = tf.node.decodeImage(imageBuffer, 3);
+        const img =  tf.tidy(() => tfimage.expandDims(0).toFloat().div(255).sub(1));
+        const processedImg = tf.image.resizeBilinear(img, [224, 224]); 
+        // console.log(processedImg);
+        // image.dispose();
         return processedImg;
     }
 
@@ -95,11 +126,12 @@ export class DetectionService implements DetectionServiceI {
           try{
             const processedImg = await this.processImage(image);
             if(processedImg && this.model){
-              let outputTensor = this.model.predict(processedImg);
-              // console.log(outputTensor);
-              const predictedClass = await outputTensor.as1D().argMax().data();
-              const confidence = Math.round(await outputTensor.as1D().max().data() * 100); 
-              const result = {'input': {'image': image}, 'output': {'class': this.labels[predictedClass[0]], 'confidence': confidence}}; 
+              let predictions = await this.model.predict(processedImg);
+              const predicted_index = await predictions.as1D().argMax().data();  
+              const score = await predictions.as1D().softmax().max().data();
+              // const confidence = Math.round(await predictions.as1D().max().data() * 100); 
+              const confidence = Math.round(score[0] * 100); 
+              const result = {'input': {'image': image}, 'output': {'class': this.labels[predicted_index], 'confidence': confidence}}; 
               // const result = {'image': image, 'class': this.labels[predictedClass[0]], 'confidence': confidence}; 
               return result;      
             }    
