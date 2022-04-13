@@ -37,6 +37,10 @@
           "value": "/usr/share"
         },
         {
+          "name": "MODEL_TAR_FILE",
+          "value": "https://gurvsin3-visualrecognition.s3.jp-tok.cloud-object-storage.appdomain.cloud/model.tgz"
+        },
+        {
           "name": "USE_WEBCAM",
           "value": "true"
         },

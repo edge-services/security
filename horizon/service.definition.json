@@ -29,6 +29,12 @@
             "defaultValue": "/usr/share"
         },
         {
+            "name": "MODEL_TAR_FILE",
+            "label": "Model tar file path",
+            "type": "string",
+            "defaultValue": "https://gurvsin3-visualrecognition.s3.jp-tok.cloud-object-storage.appdomain.cloud/model.tgz"
+        },
+        {
             "name": "USE_WEBCAM",
             "label": "Use of Webcam or Picam",
             "type": "string",
