@@ -94,7 +94,7 @@ export class DetectionService implements DetectionServiceI {
           const DATA_DIR = appConfig.DATA_DIR || path.join(__dirname, '../assets');  
           this.labels = LABELS.split(',');
           const MODEL_PATH = path.join(DATA_DIR, 'model');
-          // const MODEL_PATH = path.join(DATA_DIR, 'tflite/model.tflite');
+          // const MODEL_PATH = path.join(DATA_DIR, 'seq-mobilenet.h5');
           console.log('MODEL_PATH: >> ', MODEL_PATH);
           if (!this.model) {
              this.model = await tf.node.loadSavedModel(MODEL_PATH, ['serve'], 'serving_default');
