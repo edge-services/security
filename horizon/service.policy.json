@@ -3,7 +3,7 @@
     ],
     "constraints": [
       "hasCamera == true",
-      "detection == true"
+      "security == true"
     ]
 }
   

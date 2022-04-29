@@ -16,7 +16,7 @@
   ],
   "constraints": [
     "hasCamera == true",
-    "detection == true"
+    "security == true"
   ],
   "userInput": [
     {
@@ -50,7 +50,7 @@
         },
         {
           "name": "GATEWAY_API",
-          "value": "http://192.168.1.16:9000/api"
+          "value": "http://192.168.1.8:9000/api"
       },
         {
           "name": "LD_LIBRARY_PATH",

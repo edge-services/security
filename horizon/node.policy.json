@@ -2,7 +2,7 @@
   "properties": [
     { "name": "model", "value": "Rpi4" },
     { "name": "hasCamera", "value": true },
-    { "name": "detection", "value": true },
+    { "name": "security", "value": true },
     { "name": "openhorizon.allowPrivileged", "value": true }    
   ],
   "constraints": [
